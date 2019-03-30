@@ -1,0 +1,14 @@
+{
+  "name": "proyecto-node",
+  "version": "1.0.1",
+  "description": "Software proyecto del curso de NodeJs acerca de la dependencia de educación continua del Tecnológico de Antioquia",
+  "main": "cursos.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "crisel criseljazminal@ufps.edu.co",
+  "license": "ISC",
+  "dependencies": {
+    "yargs": "^13.2.2"
+  }
+}

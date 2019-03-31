@@ -3,7 +3,15 @@ const fs = require('fs');
 lista_cursos =[];
 usuarios=[];
 
+const validar_usuario_repetido = (documento) =>{
+  listar_usuarios();
+  let duplicado = usuarios.find( user =>(user.documento == documento));
+  if(!duplicado){
+    return false;
+  }
+  return true;
 
+}
 
 const listar_cursos = () =>{
 
@@ -25,6 +33,15 @@ const listar_cursos = () =>{
     return texto;
 }
 
+const listar_usuarios = () =>{
+  try{
+    usuarios = require('./archivos-json/usuarios.json')
+  }catch(error){
+    usuarios = [];
+  }
+}
+
 module.exports = {
-  listar_cursos
+  listar_cursos,
+  validar_usuario_repetido
 };

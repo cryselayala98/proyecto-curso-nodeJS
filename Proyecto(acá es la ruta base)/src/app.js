@@ -38,8 +38,17 @@ app.get('/', (req,res)=>{
   });
 });
 
-app.post('/calculos', (req,res)=>{
-  res.render('calculos', {
+app.get('/registrarse', (req,res)=>{
+  res.render('registrarse', {
+    estudiante: req.body.estudiante,
+    nota1: parseInt(req.body.nota1),
+    nota2: parseInt(req.body.nota2),
+    nota3: parseInt(req.body.nota3)
+  });
+});
+
+app.get('/ver-cursos', (req,res)=>{
+  res.render('ver-cursos', {
     estudiante: req.body.estudiante,
     nota1: parseInt(req.body.nota1),
     nota2: parseInt(req.body.nota2),

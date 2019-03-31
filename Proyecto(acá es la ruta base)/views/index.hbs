@@ -1,0 +1,19 @@
+    {{>header}}
+    <p>Bienvenido a la página de incripción a los cursos :3</p>
+
+    {{{listar}}}  {{!--comentario en hbs  {{{para insertar html}}} --}}
+
+    <h3>Ingresar una nueva calificación</h3>
+    <form action="/calculos" method="post">
+      <label>Ingrese nombre:</label>
+      <input type="text" name="estudiante">
+      <label>Ingrese nota 1:</label>
+      <input type="number" name="nota1">
+      <label>Ingrese nota 2:</label>
+      <input type="number" name="nota2">
+      <label>Ingrese nota 3:</label>
+      <input type="number" name="nota3">
+      <button >Calcular</button>
+    </form>
+
+    {{>footer}}

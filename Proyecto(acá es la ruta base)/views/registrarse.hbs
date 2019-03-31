@@ -16,8 +16,14 @@
 <h2>Registrarse como aspirante</h2>
 <form action="/calculos" method="post">
   <label>Ingrese documento de identidad</label>
-  <input type="text" name="estudiante" placeholder=12345>
-  <button >Ingresar</button>
+  <input type="text" name="documento" placeholder=12345 required>
+  <label>Ingrese correo</label>
+  <input type="email" name="correo" placeholder="correo@correo.com" required>
+  <label>Ingrese Nombre</label>
+  <input type="text" name="nombre" placeholder="pepito perez" required>
+  <label>Ingrese Teléfono</label>
+  <input type="text" name="telefono" placeholder="312457854" required>
+  <button >Registrarse</button>
 </form>
 
 

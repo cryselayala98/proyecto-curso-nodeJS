@@ -1,33 +1,12 @@
 const hbs = require ('hbs');
+const funciones = require('./funciones')
 
 hbs.registerHelper('obtener_promedio', (nota1, nota2, nota3)=>{
   return (nota1+nota2+nota3)/3;
 })
 
-//listar listado.json y mostrarla en pantalla
-hbs.registerHelper('listar', ()=>{
-  lista_estudiantes = require('./listado.json')
-  let texto="<table> \
-            <thead> \
-            <th> Nombre Estudiante </th>\
-            <th> Matemáticas </th>\
-            <th> Inglés </th>\
-            <th> Programación </th>\
-            </thead>\
-            <tbody>";
-  lista_estudiantes.forEach(estudiante=>{
-    texto = texto+
-            '<tr>'+
-            '<td>'+ estudiante.nombre+'</td>'+
-            '<td>'+ estudiante.matematicas+'</td>'+
-            '<td>'+ estudiante.Ingles+'</td>'+
-            '<td>'+ estudiante.programacion+'</td>'+
-            '</tr>';
-
-  });
-  texto = texto+
-          '</tbody>'+
-          '</table>';
-          
+/*Mostrar lista de cursos (solo los disponiles)*/
+hbs.registerHelper('ver-cursos-disponibles', ()=>{
+  let texto = funciones.listar_cursos();
   return texto;
 });

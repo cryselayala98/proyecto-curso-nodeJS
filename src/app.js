@@ -29,9 +29,9 @@ app.get('/', (req,res)=>{
 });
 
 app.get('/mis-cursos', (req,res)=>{
-  //let texto= funciones.listar_cursos_estudiante(req.body.documento);
+  let texto= funciones.listar_cursos_estudiante(req.session.documento);
   res.render('aspirante/mis-cursos',{
-    cursos: "texto"
+    cursos: texto
   });
 });
 
@@ -59,6 +59,24 @@ app.post('/relacionar-curso', (req,res)=>{
   }
 });
 
+app.post('/iniciar', (req,res)=>{
+  let documento= req.body.documento;
+  let validar_repetido = funciones.validar_usuario_repetido(documento);
+
+  if(!validar_repetido){
+    res.render('index', {
+      error: "El usuario no existe"
+    });
+  }else{
+    req.session.nombre= validar_repetido.rol;
+    req.session.documento= validar_repetido.documento;
+    req.session.correo= validar_repetido.correo;
+    req.session.telefono= validar_repetido.telefono;
+    req.session.rol= validar_repetido.rol;
+    res.redirect('/principal');
+
+  }
+});
 
 app.post('/registrar-user', (req,res)=>{
   let documento= req.body.documento;
@@ -73,6 +91,7 @@ app.post('/registrar-user', (req,res)=>{
     });
   }
   else{
+
     req.session.documento= documento;
     req.session.nombre= nombre;
     req.session.correo= correo;

@@ -6,11 +6,12 @@ usuarios_curso=[];
 
 const validar_usuario_repetido = (documento) =>{
   listar_usuarios();
+  console.log(usuarios.length);
   let duplicado = usuarios.find( user =>(user.documento == documento));
   if(!duplicado){
     return false;
   }
-  return true;
+  return duplicado;
 
 }
 
@@ -18,10 +19,33 @@ const validar_usuario_repetido = (documento) =>{
 const listar_cursos_estudiante = (documento) =>{
 
   listar_usuarios_cursos();
-  let validar = usuarios_curso.find(function(user) {
-    return (user.id_est == id_est);
+  let validar = usuarios_curso.filter(function(user) {
+    return (user.id_est == documento);
   });
-//voy acaaaaaaaaaaaaaaaaaa
+  console.log(validar);
+  if(!validar.length){
+    console.log("no tienes cursos");
+    return "no estás registrado en ningún curso";
+  }
+  //buscar info mas especifica de cada curso
+  listando_cursos();
+  texto = '';
+  validar.forEach(val=>{
+    let curso = lista_cursos.find(function(curso1) {
+      return (curso1.id == val.id_curso);
+    });
+    texto = texto+
+            '<p><strong>Id del curso</strong>: '+ curso.id + '</p>'+
+            '<p><strong>Nombre del curso: </strong>' + curso.nombre + '</p>'+
+            '<p><strong>Valor del curso: </strong>' + curso.valor+'</p>'+
+            '<p><strong>Descripción: </strong>' + curso.descripcion+'</p>'+
+            '<p><strong>Modalidad: </strong>' + curso.modalidad+'</p>'+
+            '<p><strong>Intensidad: </strong>' + curso.intensidad+'</p>'+
+            '<br><br>';
+  });
+  return texto;
+
+
 }
 
 const validar_existencia_curso = (id) =>{
@@ -135,6 +159,6 @@ module.exports = {
   validar_usuario_repetido,
   registrar_usuario,
   validar_existencia_curso,
-  registrar_curso_est
-
+  registrar_curso_est,
+  listar_cursos_estudiante
 };

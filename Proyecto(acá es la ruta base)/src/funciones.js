@@ -2,7 +2,6 @@ const fs = require('fs');
 
 lista_cursos =[];
 usuarios=[];
-usuarios_curso=[];
 
 const validar_usuario_repetido = (documento) =>{
   listar_usuarios();
@@ -18,10 +17,27 @@ const validar_usuario_repetido = (documento) =>{
 const listar_cursos_estudiante = (documento) =>{
 
   listar_usuarios_cursos();
-  let validar = usuarios_curso.find(function(user) {
-    return (user.id_est == id_est);
-  });
+  let validar = usuarios_curso.filter( user =>(user.id_est == documento));
 
+  if(validar.length==0){
+
+    return 'el estudiante no se ha registrado en ningun curso.';
+  }else{
+    let texto = '';
+    console.log(validar.length);
+    validar.forEach(curso_aux=>{
+      let curso = lista_cursos.find( c =>(c.id == curso_aux.id));
+      texto = texto+
+              '<p><strong>Id del curso</strong>: '+ curso['id'] + '</p>'+
+              '<p><strong>Nombre del curso: </strong>' + curso['nombre'] + '</p>'+
+              '<p><strong>Valor del curso: </strong>' + curso['valor']+'</p>'+
+              '<p><strong>Descripción: </strong>' + curso['descripcion']+'</p>'+
+              '<p><strong>Modalidad: </strong>' + curso['modalidad']+'</p>'+
+              '<p><strong>Intensidad: </strong>' + curso['intensidad']+'</p>'+
+              '<br><br>';
+    });
+    return texto;
+  }
 }
 
 const validar_existencia_curso = (id) =>{
@@ -114,27 +130,12 @@ const listar_usuarios = () =>{
   }
 }
 
-const listando_cursos = () =>{
-  try{
-    lista_cursos = require('./archivos-json/listado-de-cursos.json')
-  }catch(error){
-    lista_cursos = [];
-  }
-}
-
-const listar_usuarios_cursos = () =>{
-  try{
-    usuarios_curso = require('./archivos-json/registrados-curso.json')
-  }catch(error){
-    usuarios_curso = [];
-  }
-}
-
 module.exports = {
   listar_cursos,
   validar_usuario_repetido,
   registrar_usuario,
   validar_existencia_curso,
-  registrar_curso_est
+  registrar_curso_est,
+  listar_cursos_estudiante
 
 };

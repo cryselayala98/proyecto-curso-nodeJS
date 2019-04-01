@@ -1,5 +1,4 @@
     {{>header}}
-    <p>Bienvenido a la página de incripción a los cursos :3</p>
 
     <ul>
       <ol>
@@ -13,13 +12,16 @@
       </ol>
     </ul>
 
+    {{#if error}}
+        <p>{{error}}</p>
+    {{/if}}
+
     <h3>Iniciar Sesión</h3>
-    <form action="/calculos" method="post">
+    <form action="/ini" method="post">
       <label>Ingrese documento de identidad</label>
       <input type="text" name="estudiante" placeholder=12345>
       <button >Ingresar</button>
     </form>
-
 
 
     {{>footer}}

@@ -24,7 +24,7 @@ const crear = (estudiante) =>{
 const listar = () =>{
   try{
     inscritos = require('./listaInscritos.json');
-    lista_inscritos =JSON.parse(fs.readFileSync('listaInscritos.json'));
+  //  lista_inscritos =JSON.parse(fs.readFileSync('listaInscritos.json'));
   }catch(error){
     inscritos = [];
   }

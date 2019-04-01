@@ -1,27 +1,27 @@
     {{>header}}
 
-    <ul>
-      <ol>
-        <a href="/">Inicio</a>
-      </ol>
-      <ol>
-        <a href="/ver-cursos">Ver Cursos</a>
-      </ol>
-      <ol>
-        <a href="/registrarse">Registrarse</a>
-      </ol>
-    </ul>
 
     {{#if error}}
         <p>{{error}}</p>
     {{/if}}
+    <div class="container" style="text-align: center">
+      <h3>Iniciar Sesión</h3>
 
-    <h3>Iniciar Sesión</h3>
-    <form action="/ini" method="post">
-      <label>Ingrese documento de identidad</label>
-      <input type="text" name="estudiante" placeholder=12345>
-      <button >Ingresar</button>
-    </form>
+            <form action="/ini" method="post">
+            <label for="usr">Documento de Identidad</label>
+            <input style="position: center" class="form-control" name= "estudiante" placeholder="0000000">
+            <br>
+            <button class="btn btn-dark">Ingresar</button>
+          </form>
+    </div>
+
+
+
+
+
+
+
+
 
 
     {{>footer}}

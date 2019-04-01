@@ -21,7 +21,7 @@ const listar_cursos_estudiante = (documento) =>{
   let validar = usuarios_curso.find(function(user) {
     return (user.id_est == id_est);
   });
-
+//voy acaaaaaaaaaaaaaaaaaa
 }
 
 const validar_existencia_curso = (id) =>{

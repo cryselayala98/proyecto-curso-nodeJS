@@ -8,7 +8,7 @@
           <a href="/" class="nav-link" href="#">Inicio</a>
         </li>
         <li class="nav-item">
-          <a href="/ver-cursos" class="nav-link" href="#" >Ver Cursos</a>
+          <a href="/ver-cursos" class="nav-link" href="#" >Ver cursos</a>
         </li>
         <li class="nav-item">
           <a href="/registrarse" class="nav-link" href="#">Registrarse</a>
@@ -16,15 +16,15 @@
       </ul>
     </nav>
 
-    
+
     {{#if error}}
         <p>{{error}}</p>
     {{/if}}
-    <div class="container" style="text-align: center">
-      <h3>Iniciar Sesión</h3>
+    <div  class = "design">
+      <h3>INICIAR SESIÓN</h3>
 
             <form action="/ini" method="post">
-            <label for="usr">Documento de Identidad</label>
+            <label for="usr">Introduzca su documento:</label>
             <input style="position: center" class="form-control" name= "estudiante" placeholder="0000000">
             <br>
             <button class="btn btn-dark">Ingresar</button>

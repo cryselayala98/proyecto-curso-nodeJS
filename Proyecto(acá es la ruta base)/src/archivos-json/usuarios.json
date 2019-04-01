@@ -1,9 +1,1 @@
-[
-  {
-    "documento":"0",
-    "nombre":"Pilar Rodriguez",
-    "telefono":"00000",
-    "correo":"pilar@ufps.edu.co",
-    "rol":"coordinador"
-  }
-]
+[{"documento":"1","telefono":"1234","correo":"elianallanes.huem@gmail.com","nombre":"crisel","rol":"aspirante"},{"documento":"0","telefono":"1234","correo":"elianallanes.huem@gmail.com","nombre":"crisel","rol":"aspirante"},{"documento":"d","telefono":"1234","correo":"elianallanes.huem@gmail.com","nombre":"crisel","rol":"aspirante"},{"documento":"rr","telefono":"1234","correo":"crisellamejor@gmail.com","nombre":"crisel","rol":"aspirante"},{"documento":"ww","telefono":"1234","correo":"elianallanes.huem@gmail.com","nombre":"f","rol":"aspirante"},{"documento":"www","telefono":"1234","correo":"elianallanes.huem@gmail.com","nombre":"crisel","rol":"aspirante"},{"documento":"qq","telefono":"1234","correo":"elianallanes.huem@gmail.com","nombre":"crisel","rol":"aspirante"},{"documento":"qqa","telefono":"1234","correo":"elianallanes.huem@gmail.com","nombre":"crisel","rol":"aspirante"}]

@@ -1,27 +1,30 @@
 {{>header}}
+<h2>Registrarse en un curso</h2>
 
+<ul>
+  <ol>
+    <a href="/">Inicio</a>
+  </ol>
+  <ol>
+    <a href="/ver-cursos">Ver Cursos</a>
+  </ol>
+  <ol>
+    <a href="/registrarse">Registrarse</a>
+  </ol>
+</ul>
 
-<div class="container-fluid" style="text-align: center">
-  <h2>Registrarse en un curso</h2>
-  <h2>Registrarse como aspirante</h2>
-  <form action="/registrar-user" method="post">
-    <label>Ingrese documento de identidad</label>
-    <input class="form-control" type="text" name="documento" placeholder=12345 required>
-    <br>
-    <label>Ingrese correo</label>
-    <input class="form-control" type="email" name="correo" placeholder="correo@correo.com" required>
-    <br>
-    <label>Ingrese Nombre</label>
-    <input class="form-control" type="text" name="nombre" placeholder="pepito perez" required>
-    <br>
-    <label>Ingrese Teléfono</label>
-    <input class="form-control" type="text" name="telefono" placeholder="312457854" required>
-    <br>
-    <button class="btn btn-dark" >Registrarse</button>
-  </form>
-</div>
-
-
+<h2>Registrarse como aspirante</h2>
+<form action="/registrar-user" method="post">
+  <label>Ingrese documento de identidad</label>
+  <input type="text" name="documento" placeholder=12345 required>
+  <label>Ingrese correo</label>
+  <input type="email" name="correo" placeholder="correo@correo.com" required>
+  <label>Ingrese Nombre</label>
+  <input type="text" name="nombre" placeholder="pepito perez" required>
+  <label>Ingrese Teléfono</label>
+  <input type="text" name="telefono" placeholder="312457854" required>
+  <button >Registrarse</button>
+</form>
 
 
 

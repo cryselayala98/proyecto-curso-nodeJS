@@ -6,7 +6,7 @@ usuarios_curso=[];
 
 const validar_usuario_repetido = (documento) =>{
   listar_usuarios();
-  console.log(usuarios.length);
+//  console.log(usuarios.length);
   let duplicado = usuarios.find( user =>(user.documento == documento));
   if(!duplicado){
     return false;
@@ -22,9 +22,9 @@ const listar_cursos_estudiante = (documento) =>{
   let validar = usuarios_curso.filter(function(user) {
     return (user.id_est == documento);
   });
-  console.log(validar);
+
   if(!validar.length){
-    console.log("no tienes cursos");
+
     return "no estás registrado en ningún curso";
   }
   //buscar info mas especifica de cada curso
@@ -79,7 +79,7 @@ const guardar_nuevo_usuario_curso =() =>{
     if (err){
       throw (err);
     }
-    console.log("Usuario Registrado");
+
   });
 
 }
@@ -105,7 +105,7 @@ let guardar_usuario= () => {
     if (err){
       throw (err);
     }
-    console.log("Usuario Registrado");
+
   });
 
 }
@@ -154,11 +154,33 @@ const listar_usuarios_cursos = () =>{
   }
 }
 
+const cancelar_curso = (id_curso, documento) =>{
+  listar_usuarios_cursos();
+
+  let nuevo = usuarios_curso.filter(function(user_curso) { //filtrar los estudiantes que no cumplan esas condiciones
+      return (user_curso.id_est != documento || user_curso.id_curso != id_curso);
+    });
+  usuarios_curso = nuevo;
+  guardar_nuevo_usuario_curso();
+}
+
+const validar_existencia_curso_estudiante = (id_curso, id_est) =>{
+  listar_usuarios_cursos();
+
+  //validar que el estudiante se haya registrado antes al curso
+  let validar = usuarios_curso.find(function(user) {
+    return (user.id_est == id_est && user.id_curso == id_curso);
+  });
+  return validar;
+}
+
 module.exports = {
   listar_cursos,
   validar_usuario_repetido,
   registrar_usuario,
   validar_existencia_curso,
   registrar_curso_est,
-  listar_cursos_estudiante
+  listar_cursos_estudiante,
+  cancelar_curso,
+  validar_existencia_curso_estudiante
 };

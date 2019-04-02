@@ -125,9 +125,16 @@ app.post('/registrar-user', (req,res)=>{
   }
 });
 app.get('/principal', (req,res)=>{
+
+  if(req.session.rol == 'aspirante'){
   res.render('aspirante/index-aspirante', {
     nombre: req.session.nombre
   });
+}else{
+  res.render('coordinador/index-coordinador', {
+    nombre: req.session.nombre
+  });
+}
 });
 
 app.get('/ver-cursos-aspirante', (req,res)=>{

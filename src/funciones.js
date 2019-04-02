@@ -22,7 +22,7 @@ const listar_cursos_estudiante = (documento) =>{
   let validar = usuarios_curso.filter(function(user) {
     return (user.id_est == documento);
   });
-
+//console.log(validar+" "+documento);
   if(!validar.length){
 
     return "no estás registrado en ningún curso";

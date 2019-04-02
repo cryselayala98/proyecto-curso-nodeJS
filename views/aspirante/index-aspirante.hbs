@@ -7,7 +7,7 @@
       <a href="/" class="nav-link" href="#">Inicio</a>
     </li>
     <li class="nav-item">
-      <a href="/ver-cursos-aspirante" class="nav-link" href="#">Cursos disponibles</a>
+      <a href="/ver-cursos" class="nav-link" href="#">Cursos disponibles</a>
     </li>
     <li class="nav-item">
       <a href="/inscribir-curso" class="nav-link" href="#" >Inscribirse</a>
@@ -23,8 +23,14 @@
 </nav>
 
 {{#if success}}
-    <p>{{success}}</p>
+<p><div class="alert alert-success" role="alert"> {{success}}</div></p>
 {{/if}}
+
+{{#if error}}
+<p><div class="alert alert-danger" role="alert"> {{error}}</div></p>
+{{/if}}
+
+<h1>Menú Aspirante</h1>
 
 <div  class = "design" style="padding-left: 200px; padding-right:200px">
   <h2>Bienvenido <br> {{nombre}}</h2>

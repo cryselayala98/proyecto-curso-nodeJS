@@ -15,6 +15,35 @@ const validar_usuario_repetido = (documento) =>{
 
 }
 
+const ver_inscritos = () =>{
+  let texto = '';
+  listando_cursos();
+  listar_usuarios();
+  listar_usuarios_cursos();
+  hay_registrados=false;
+
+  lista_cursos.forEach(curso=>{
+    if(curso.estado=='disponible'){
+    let usuarios_act = usuarios_curso.filter(user => (user.id_curso == curso.id));
+    if(usuarios_act.length>0){
+      hay_registrados=true;
+      texto = texto + '<h3>Para el curso "'+curso.nombre+'"</h3><br>';
+      usuarios_act.forEach(user=>{ //recorrer cada usuario
+      let usuario_aux = usuarios.find( user2 =>(user2.documento == user.id_est));
+      texto = texto + '<p><strong>Nombre del Usuario</strong>: '+ usuario_aux.nombre +
+              '  <a href="/eliminar-user-curso?documento='+usuario_aux.documento+
+              '&id_curso='+curso.id+'">(Eliminar de este curso)</a>'+'</p><br>';  //dar de baja a un estudiante
+      });
+      texto = texto+ '<br><br>';
+    }
+  }
+  });
+
+  if(!hay_registrados)texto = 'No hay Estudiantes Registrados en los Cursos';
+
+  return texto;
+}
+
 //cursos en los que el estudiante está inscrito
 const listar_cursos_estudiante = (documento) =>{
 
@@ -44,8 +73,6 @@ const listar_cursos_estudiante = (documento) =>{
             '<br><br>';
   });
   return texto;
-
-
 }
 
 const validar_existencia_curso = (id) =>{
@@ -81,7 +108,26 @@ const guardar_nuevo_usuario_curso =() =>{
     }
 
   });
+}
 
+const registrar_nuevo_curso = (id_curso, nombre, valor, descripcion, modalidad, intensidad) =>{
+  listando_cursos();
+  let duplicado = lista_cursos.find( curso =>(curso.id == id_curso));
+  if(duplicado)return false; //curso ya había sido registrado
+
+  let nuevo_curso ={
+    id:id_curso,
+    nombre:nombre,
+    valor:valor,
+    descripcion:descripcion,
+    modalidad:modalidad,
+    intensidad:intensidad,
+    estado:'disponible'
+  };
+  lista_cursos.push(nuevo_curso);
+  guardar_cursos();
+
+  return true;
 }
 
 const registrar_usuario = (documento, correo, nombre, telefono) =>{
@@ -105,9 +151,35 @@ let guardar_usuario= () => {
     if (err){
       throw (err);
     }
+  });
+}
 
+const listar_cursos_todos = () =>{
+  listando_cursos();
+  let texto = '';
+  lista_cursos.forEach(curso=>{
+    texto = texto+
+            '<p><strong>Id del curso</strong>: '+ curso.id + '</p>'+
+            '<p><strong>Nombre del curso: </strong>' + curso.nombre + '</p>'+
+            '<p><strong>Valor del curso: </strong>' + curso.valor+'</p>'+
+            '<p><strong>Descripción: </strong>' + curso.descripcion+'</p>'+
+            '<p><strong>Modalidad: </strong>' + curso.modalidad+'</p>'+
+            '<p><strong>Intensidad: </strong>' + curso.intensidad+'</p>'+
+            '<p><strong>Estado: ' + curso.estado+'</strong></p>';
+    if(curso.estado=='disponible') texto = texto + '<a href="/cerrarCurso?id_curso='+curso.id+'"><i>(Cambiar el estado del curso '+curso.id+' a cerrado)</i></a>'
+    texto=texto+'<br><br>';
+  });
+  return texto;
+}
+
+const listar_est_select = ()=>{
+  let texto ='';
+  listar_usuarios();
+  usuarios.forEach(user=>{
+    texto = texto + '<option value="'+user.documento+'">'+user.nombre+' ('+user.rol+')</option>';
   });
 
+  return texto;
 }
 
 const listar_cursos = () =>{
@@ -174,6 +246,36 @@ const validar_existencia_curso_estudiante = (id_curso, id_est) =>{
   return validar;
 }
 
+const cerrar_curso = (id_curso) =>{
+  listando_cursos();
+
+  let curso_search = lista_cursos.find( curso =>(curso.id == id_curso));
+  curso_search.estado ='cancelado';
+  let cursos = lista_cursos.filter( curso =>(curso.id != id_curso));
+  cursos.push(curso_search);
+  lista_cursos = cursos;
+  guardar_cursos();
+}
+
+const guardar_cursos = () =>{
+  let datos = JSON.stringify(lista_cursos);
+  fs.writeFile("./src/archivos-json/listado-de-cursos.json", datos, (err)=>{
+    if (err){
+      throw (err);
+    }
+
+  });
+}
+
+const cambiar_rol=(documento, rol) =>{
+  listar_usuarios();
+  usuario = usuarios.find( user =>(user.documento == documento));
+  usuario.rol =rol;
+  nueva_lista = lista_cursos.filter(  user =>(user.documento != documento));
+  nueva_lista.push(usuario);
+  guardar_usuario();
+}
+
 module.exports = {
   listar_cursos,
   validar_usuario_repetido,
@@ -182,5 +284,11 @@ module.exports = {
   registrar_curso_est,
   listar_cursos_estudiante,
   cancelar_curso,
-  validar_existencia_curso_estudiante
+  validar_existencia_curso_estudiante,
+  listar_cursos_todos,
+  cerrar_curso,
+  registrar_nuevo_curso,
+  ver_inscritos,
+  listar_est_select,
+  cambiar_rol
 };

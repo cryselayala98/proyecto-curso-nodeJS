@@ -1,4 +1,5 @@
 {{>header}}
+
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
 
   <!-- Links -->
@@ -7,13 +8,16 @@
       <a href="/" class="nav-link" href="#">Inicio</a>
     </li>
     <li class="nav-item">
-      <a href="/ver-cursos" class="nav-link" href="#">Cursos disponibles</a>
+      <a href="/crear-curso" class="nav-link" href="#">Crear Curso</a>
     </li>
     <li class="nav-item">
-      <a href="/inscribir-curso" class="nav-link" href="#" >Inscribirse</a>
+      <a href="/ver-cursos" class="nav-link" href="#" >Ver todos los cursos</a>
     </li>
     <li class="nav-item">
-      <a href="/mis-cursos" class="nav-link" href="#">Mis cursos</a>
+      <a href="/inscritos" class="nav-link" href="#">Ver Inscritos</a>
+    </li>
+    <li class="nav-item">
+      <a href="/cambiar-rol" class="nav-link" href="#">Cambiar Roles</a>
     </li>
     <li class="nav-item">
       <a href="/cerrar" class="nav-link" href="#">Cerrar sesión</a>
@@ -30,21 +34,10 @@
 <p><div class="alert alert-danger" role="alert"> {{error}}</div></p>
 {{/if}}
 
-<div  class = "design">
-  <h2>INSCRIBIRSE A UN CURSO</h2>
+<div class="design">
+  <h2>VER INSCRITOS A LOS CURSOS</h2>
   <br>
-  <form action="/relacionar-curso" method="post">
-    <label>Ingrese Id del curso</label>
-    <input class= "form-control" type="text" name="id" placeholder=0 required>
-    <br>
-    <button class="btn btn-dark">Inscribirse</button>
-  </form>
+  {{{ver-inscritos}}}
 </div>
-
-
-
-
-
-
 
 {{>footer}}

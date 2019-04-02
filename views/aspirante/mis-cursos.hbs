@@ -22,11 +22,19 @@
 
 </nav>
 
+{{#if error}}
+    <p>{{error}}</p>
+{{/if}}
+
+{{#if success}}
+    <p>{{success}}</p>
+{{/if}}
+
 
 <div  class = "design">
 
   <h2>MIS CURSOS</h2>
-  {{cursos}}
+  {{{cursos}}}
   <br>
   <h3>DARME DE BAJA DE UN CURSO</h3>
   <form action="/dar_baja_curso" method="post">

@@ -1,4 +1,4 @@
-//PARA EJECUTAR   //nodemon src/app -e js,hbs
+//PARA EJECUTAR   //nodemon app -e js,hbs,json
 
 const express = require('express')
 const app = express()
@@ -35,6 +35,29 @@ app.get('/mis-cursos', (req,res)=>{
   });
 });
 
+app.post('/dar_baja_curso', (req,res)=>{
+  let id= req.body.id;
+  let validar = funciones.validar_existencia_curso_estudiante(id, req.session.documento); //si ese curso existe
+  console.log("es  "+validar);
+  let texto= funciones.listar_cursos_estudiante(req.session.documento);
+
+
+  if(!validar){
+    res.render('aspirante/mis-cursos', {
+      cursos: texto,
+      error : "No estás registrado a ese curso"
+    });
+  }else{
+
+    funciones.cancelar_curso(id, req.session.documento);
+
+    res.render('aspirante/mis-cursos', {
+      cursos: texto,
+      success : "Cancelación de curso exitosa"
+    });
+  }
+});
+
 app.post('/relacionar-curso', (req,res)=>{
 
   let id= req.body.id;
@@ -52,7 +75,7 @@ app.post('/relacionar-curso', (req,res)=>{
       error : "Ya se inscribió antes a ese curso"
     });
   }else{
-    res.render('aspirante/index-aspirante', {
+    res.render('aspirante/inscribir-curso', {
       success : "Registro de Curso exitoso"
     });
   }

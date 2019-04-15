@@ -1,18 +1,26 @@
 const fs = require('fs');
+const Usuario = require('./models/usuarios');
+const Curso = require('./models/listado-de-cursos');
+const Curso_est = require('./models/registrados-curso');
+
 
 lista_cursos =[];
 usuarios=[];
 usuarios_curso=[];
 
 const validar_usuario_repetido = (documento) =>{
-  listar_usuarios();
+  //listar_usuarios();
 //  console.log(usuarios.length);
-  let duplicado = usuarios.find( user =>(user.documento == documento));
-  if(!duplicado){
+  Usuario.find({documento:documento}).exec((err, respuesta)=>{
+    if(err){
+      return console.log(err);
+    }
+  });
+  console.log(Usuario);
+  if(!Usuario){
     return false;
   }
-  return duplicado;
-
+return Usuario;
 }
 
 const ver_inscritos = () =>{
@@ -29,9 +37,15 @@ const ver_inscritos = () =>{
       hay_registrados=true;
       texto = texto + '<h3>Para el curso "'+curso.nombre+'"</h3><br>';
       usuarios_act.forEach(user=>{ //recorrer cada usuario
-      let usuario_aux = usuarios.find( user2 =>(user2.documento == user.id_est));
-      texto = texto + '<p><strong>Nombre del Usuario</strong>: '+ usuario_aux.nombre +
-              '  <a href="/eliminar-user-curso?documento='+usuario_aux.documento+
+
+        Usuario.find({documento : user.id_est}).exec((err, respuesta)=>{
+            if(err){
+              return console.log(err);
+            }
+          });
+
+      texto = texto + '<p><strong>Nombre del Usuario</strong>: '+ Usuario.nombre +
+              '  <a href="/eliminar-user-curso?documento='+Usuario.documento+
               '&id_curso='+curso.id+'">(Eliminar de este curso)</a>'+'</p><br>';  //dar de baja a un estudiante
       });
       texto = texto+ '<br><br>';
@@ -115,7 +129,7 @@ const registrar_nuevo_curso = (id_curso, nombre, valor, descripcion, modalidad, 
   let duplicado = lista_cursos.find( curso =>(curso.id == id_curso));
   if(duplicado)return false; //curso ya había sido registrado
 
-  let nuevo_curso ={
+  let nuevo_curso = new Curso({
     id:id_curso,
     nombre:nombre,
     valor:valor,
@@ -123,26 +137,30 @@ const registrar_nuevo_curso = (id_curso, nombre, valor, descripcion, modalidad, 
     modalidad:modalidad,
     intensidad:intensidad,
     estado:'disponible'
-  };
-  lista_cursos.push(nuevo_curso);
-  guardar_cursos();
+  });
+
+  nuevo_curso.save((err, resultado) => {
+    if(err)return false;
+  });
+  //lista_cursos.push(nuevo_curso);
+  //guardar_cursos();
 
   return true;
 }
 
 const registrar_usuario = (documento, correo, nombre, telefono) =>{
   listar_usuarios();
-  let aspirante = {
+  let aspirante = new Usuario({
     documento : documento,
     telefono : telefono,
     correo : correo,
     nombre : nombre,
     rol : 'aspirante'
-  };
-
-  usuarios.push(aspirante);
-
-  guardar_usuario();
+  });
+  aspirante.save((err, resultado) => {
+    if(err)return false;
+    console.log(resultado);
+  });
 }
 
 let guardar_usuario= () => {
@@ -175,7 +193,7 @@ const listar_cursos_todos = () =>{
 const listar_est_select = ()=>{
   let texto ='';
   listar_usuarios();
-  usuarios.forEach(user=>{
+  Usuario.forEach(user=>{
     texto = texto + '<option value="'+user.documento+'">'+user.nombre+' ('+user.rol+')</option>';
   });
 
@@ -184,9 +202,17 @@ const listar_est_select = ()=>{
 
 const listar_cursos = () =>{
 
-    cursos = require('./archivos-json/listado-de-cursos.json')
+
+
+    cursos =  Curso.find({}).exec((err, respuesta)=>{
+          if(err){
+            return console.log(err);
+          }
+        });
+        console.log(cursos);
     let texto = "<br> \
                  <br>";
+    if(cursos){
     cursos.forEach(curso=>{
       if(curso.estado=='disponible'){
       texto = texto+
@@ -199,23 +225,27 @@ const listar_cursos = () =>{
               '<br><br>';
       }
     });
+  }
     return texto;
 }
 
 const listar_usuarios = () =>{
-  try{
-    usuarios = require('./archivos-json/usuarios.json')
-  }catch(error){
-    usuarios = [];
-  }
+
+  Usuario.find({}).exec((err, respuesta)=>{
+      if(err){
+        return console.log(err);
+      }
+    });
 }
 
 const listando_cursos = () =>{
-  try{
-    lista_cursos = require('./archivos-json/listado-de-cursos.json')
-  }catch(error){
-    lista_cursos = [];
-  }
+
+
+  Curso.find({documento : documento}).exec((err, respuesta)=>{
+    if(err){
+      return console.log(err);
+    }
+  });
 }
 
 const listar_usuarios_cursos = () =>{
@@ -248,7 +278,6 @@ const validar_existencia_curso_estudiante = (id_curso, id_est) =>{
 
 const cerrar_curso = (id_curso) =>{
   listando_cursos();
-
   let curso_search = lista_cursos.find( curso =>(curso.id == id_curso));
   curso_search.estado ='cancelado';
   let cursos = lista_cursos.filter( curso =>(curso.id != id_curso));

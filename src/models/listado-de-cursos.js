@@ -25,6 +25,10 @@ const cursos_Schema = new Schema({
   intensidad : {
     type : String,
     require : true
+  },
+  estado : {
+    type : String,
+    require : true
   }
 });
 

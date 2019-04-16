@@ -12,40 +12,6 @@ const validar_usuario_repetido = (documento) =>{
 //index
 }
 
-const ver_inscritos = () =>{
-  let texto = '';
-  listando_cursos();
-  listar_usuarios();
-  listar_usuarios_cursos();
-  hay_registrados=false;
-
-  lista_cursos.forEach(curso=>{
-    if(curso.estado=='disponible'){
-    let usuarios_act = usuarios_curso.filter(user => (user.id_curso == curso.id));
-    if(usuarios_act.length>0){
-      hay_registrados=true;
-      texto = texto + '<h3>Para el curso "'+curso.nombre+'"</h3><br>';
-      usuarios_act.forEach(user=>{ //recorrer cada usuario
-
-        Usuario.find({documento : user.id_est}).exec((err, respuesta)=>{
-            if(err){
-              return console.log(err);
-            }
-          });
-
-      texto = texto + '<p><strong>Nombre del Usuario</strong>: '+ Usuario.nombre +
-              '  <a href="/eliminar-user-curso?documento='+Usuario.documento+
-              '&id_curso='+curso.id+'">(Eliminar de este curso)</a>'+'</p><br>';  //dar de baja a un estudiante
-      });
-      texto = texto+ '<br><br>';
-    }
-  }
-  });
-
-  if(!hay_registrados)texto = 'No hay Estudiantes Registrados en los Cursos';
-
-  return texto;
-}
 
 //cursos en los que el estudiante está inscrito
 const listar_cursos_estudiante = (documento) =>{
@@ -114,9 +80,6 @@ const guardar_nuevo_usuario_curso =() =>{
 }
 
 const registrar_nuevo_curso = (id_curso, nombre, valor, descripcion, modalidad, intensidad) =>{
-  listando_cursos();
-  let duplicado = lista_cursos.find( curso =>(curso.id == id_curso));
-  if(duplicado)return false; //curso ya había sido registrado
 
   let nuevo_curso = new Curso({
     id:id_curso,
@@ -129,12 +92,8 @@ const registrar_nuevo_curso = (id_curso, nombre, valor, descripcion, modalidad, 
   });
 
   nuevo_curso.save((err, resultado) => {
-    if(err)return false;
+    if(err)console.log(err);
   });
-  //lista_cursos.push(nuevo_curso);
-  //guardar_cursos();
-
-  return true;
 }
 
 const registrar_usuario = (documento, correo, nombre, telefono) =>{
@@ -179,45 +138,6 @@ const listar_cursos_todos = () =>{
   return texto;
 }
 
-const listar_est_select = ()=>{
-  let texto ='';
-  listar_usuarios();
-  Usuario.forEach(user=>{
-    texto = texto + '<option value="'+user.documento+'">'+user.nombre+' ('+user.rol+')</option>';
-  });
-
-  return texto;
-}
-
-const listar_cursos = () =>{
-
-
-
-    cursos =  Curso.find({}).exec((err, respuesta)=>{
-          if(err){
-            return console.log(err);
-          }
-        });
-        console.log(cursos);
-    let texto = "<br> \
-                 <br>";
-    if(cursos){
-    cursos.forEach(curso=>{
-      if(curso.estado=='disponible'){
-      texto = texto+
-              '<p><strong>Id del curso</strong>: '+ curso.id + '</p>'+
-              '<p><strong>Nombre del curso: </strong>' + curso.nombre + '</p>'+
-              '<p><strong>Valor del curso: </strong>' + curso.valor+'</p>'+
-              '<p><strong>Descripción: </strong>' + curso.descripcion+'</p>'+
-              '<p><strong>Modalidad: </strong>' + curso.modalidad+'</p>'+
-              '<p><strong>Intensidad: </strong>' + curso.intensidad+'</p>'+
-              '<br><br>';
-      }
-    });
-  }
-    return texto;
-}
-
 const listar_usuarios = () =>{
 
   Usuario.find({}).exec((err, respuesta)=>{
@@ -230,11 +150,7 @@ const listar_usuarios = () =>{
 const listando_cursos = () =>{
 
 
-  Curso.find({documento : documento}).exec((err, respuesta)=>{
-    if(err){
-      return console.log(err);
-    }
-  });
+
 }
 
 const listar_usuarios_cursos = () =>{
@@ -295,7 +211,6 @@ const cambiar_rol=(documento, rol) =>{
 }
 
 module.exports = {
-  listar_cursos,
   validar_usuario_repetido,
   registrar_usuario,
   validar_existencia_curso,
@@ -306,7 +221,5 @@ module.exports = {
   listar_cursos_todos,
   cerrar_curso,
   registrar_nuevo_curso,
-  ver_inscritos,
-  listar_est_select,
   cambiar_rol
 };

@@ -89,21 +89,30 @@ app.post('/relacionar-curso', (req,res)=>{
 
 app.post('/iniciar', (req,res)=>{
   let documento= req.body.documento;
-  let validar_repetido = funciones.validar_usuario_repetido(documento);
 
-  if(!validar_repetido){
-    res.render('index', {
-      error: "El usuario no existe"
-    });
-  }else{
-    req.session.nombre= validar_repetido.nombre;
-    req.session.documento= validar_repetido.documento;
-    req.session.correo= validar_repetido.correo;
-    req.session.telefono= validar_repetido.telefono;
-    req.session.rol= validar_repetido.rol;
-    res.redirect('/principal');
+  Usuario.find({
+      documento: documento
+  }).exec(function(err, validar_repetido) {
+      if (err){
+        console.log(err);
+      }
 
-  }
+      if(!validar_repetido.length){
+        res.render('index', {
+          error: "El usuario no existe"
+        });
+      }
+      else{
+
+        req.session.nombre= validar_repetido[0].nombre;
+        req.session.documento= validar_repetido[0].documento;
+        req.session.correo= validar_repetido[0].correo;
+        req.session.telefono= validar_repetido[0].telefono;
+        req.session.rol= validar_repetido[0].rol;
+        res.redirect('/principal');
+      }
+
+  });
 });
 
 app.post('/registrar-curso', (req,res)=>{
@@ -114,17 +123,28 @@ app.post('/registrar-curso', (req,res)=>{
   let modalidad=req.body.modalidad;
   let intensidad=req.body.intensidad;
 
-  let registrar = funciones.registrar_nuevo_curso(id_curso, nombre, valor, descripcion, modalidad, intensidad);
+  //validar existencia
+  Curso.find({
+      id: id_curso
+  }).exec(function(err, resultado) {
+      if (err){
+        console.log(err);
+      }
 
-  if(!registrar){
-    res.render('coordinador/crear-curso', {
-      error: "Este curso ya existe"
-    });
-  }else{
-    res.render('coordinador/crear-curso', {
-      success: "Curso registrado con exito"
-    });
-  }
+      if(resultado.length){
+        res.render('index', {
+          error: "El curso ya existe"
+        });
+      }
+      else{
+
+        funciones.registrar_nuevo_curso(id_curso, nombre, valor, descripcion, modalidad, intensidad);
+        res.render('coordinador/crear-curso', {
+          success: "Curso registrado con exito"
+        });
+      }
+
+  });
 });
 
 app.post('/registrar-user', (req,res)=>{
@@ -141,7 +161,6 @@ app.post('/registrar-user', (req,res)=>{
         console.log(err);
       }
 
-      console.log("hola " + resultado);
       if(resultado.length){
         res.render('index', {
           error: "Ya existe este usuario"
@@ -183,13 +202,26 @@ app.get('/inscribir-curso', (req,res)=>{ //cargar vista registrar curso
 
 app.get('/ver-cursos', (req,res)=>{
 
-  if(!req.session.rol){
-    res.render('ver-cursos');
-  }else if(req.session.rol=='aspirante'){
-    res.render('aspirante/ver-cursos');
-  }else{
-    res.render('coordinador/ver-cursos');
-  }
+  Curso.find({}).exec((err, respuesta)=>{
+    if(err){
+      return console.log(err);
+    }
+
+    if(!req.session.rol){
+      res.render('ver-cursos',{
+        cursos: respuesta
+      });
+    }else if(req.session.rol=='aspirante'){
+      res.render('aspirante/ver-cursos',{
+        cursos: respuesta
+      });
+    }else{
+      res.render('coordinador/ver-cursos',{
+        cursos: respuesta
+      });
+    }
+
+  });
 });
 
 app.get('/cerrarCurso', (req,res)=>{ //cerrar un curso que está disponible; recibe una url tipo (http://localhost:3000/cerrarCurso?id_curso=4)
@@ -224,11 +256,47 @@ app.get('/crear-curso',(req,res)=>{
 });
 
 app.get('/inscritos',(req,res)=>{
-  res.render('coordinador/inscritos');
+
+  let texto = '';
+
+  Curso.find({}).exec((err, respuesta1)=>{
+    if(err){
+      return console.log(err);
+    }
+
+    Usuario.find({}).exec((err, respuesta2)=>{
+      if(err){
+        return console.log(err);
+      }
+
+      Curso_est.find({}).exec((err, respuesta3)=>{
+        if(err){
+          return console.log(err);
+        }
+
+        res.render('coordinador/inscritos',{
+          cursos: respuesta1,
+          usuarios:respuesta2,
+          cursos_est:respuesta3
+        });
+      });
+    });
+
+  });
+
 });
 
 app.get('/cambiar-rol',(req,res)=>{
-  res.render('coordinador/roles');
+
+  Usuario.find({}).exec((err, respuesta)=>{
+    if(err){
+      return console.log(err);
+    }
+    res.render('coordinador/roles',{
+      usuarios:respuesta
+    });
+  });
+
 });
 
 app.post('/cambiar-rol-user',(req,res)=>{

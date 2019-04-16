@@ -4,6 +4,9 @@ const path = require('path')
 const hbs = require('hbs')
 const funciones = require('./../funciones')
 var cookieSession = require('cookie-session')
+const Usuario = require('./../models/usuarios');
+const Curso = require('./../models/listado-de-cursos');
+const Curso_est = require('./../models/registrados-curso');
 
 const dir_views = path.join(__dirname, '../../views');
 const directorio_partials =  path.join(__dirname, '../../partials');
@@ -125,28 +128,39 @@ app.post('/registrar-curso', (req,res)=>{
 });
 
 app.post('/registrar-user', (req,res)=>{
+
   let documento= req.body.documento;
   let correo= req.body.correo;
   let nombre= req.body.nombre;
   let telefono= req.body.telefono;
 
-  let validar_repetido = funciones.validar_usuario_repetido(documento);
-  if(validar_repetido){
-    res.render('index', {
-      error: "Ya existe este usuario"
-    });
-  }
-  else{
+  Usuario.find({
+      documento: documento
+  }).exec(function(err, resultado) {
+      if (err){
+        console.log(err);
+      }
 
-    funciones.registrar_usuario(documento, correo, nombre, telefono);
+      console.log("hola " + resultado);
+      if(resultado.length){
+        res.render('index', {
+          error: "Ya existe este usuario"
+        });
+      }
+      else{
 
-    req.session.documento= documento;
-    req.session.nombre= nombre;
-    req.session.correo= correo;
-    req.session.telefono= telefono;
-    req.session.rol= 'aspirante';
-    res.redirect('/principal');
-  }
+        funciones.registrar_usuario(documento, correo, nombre, telefono);
+
+        req.session.documento= documento;
+        req.session.nombre= nombre;
+        req.session.correo= correo;
+        req.session.telefono= telefono;
+        req.session.rol= 'aspirante';
+        res.redirect('/principal');
+      }
+
+  });
+
 });
 
 app.get('/principal', (req,res)=>{

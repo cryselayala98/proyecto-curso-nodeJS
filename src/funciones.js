@@ -9,18 +9,7 @@ usuarios=[];
 usuarios_curso=[];
 
 const validar_usuario_repetido = (documento) =>{
-  //listar_usuarios();
-//  console.log(usuarios.length);
-  Usuario.find({documento:documento}).exec((err, respuesta)=>{
-    if(err){
-      return console.log(err);
-    }
-  });
-  console.log(Usuario);
-  if(!Usuario){
-    return false;
-  }
-return Usuario;
+//index
 }
 
 const ver_inscritos = () =>{
@@ -159,7 +148,7 @@ const registrar_usuario = (documento, correo, nombre, telefono) =>{
   });
   aspirante.save((err, resultado) => {
     if(err)return false;
-    console.log(resultado);
+    //console.log(resultado);
   });
 }
 

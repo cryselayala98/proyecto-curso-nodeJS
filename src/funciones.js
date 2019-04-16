@@ -202,12 +202,16 @@ const guardar_cursos = () =>{
 }
 
 const cambiar_rol=(documento, rol) =>{
-  listar_usuarios();
-  usuario = usuarios.find( user =>(user.documento == documento));
-  usuario.rol =rol;
-  nueva_lista = lista_cursos.filter(  user =>(user.documento != documento));
-  nueva_lista.push(usuario);
-  guardar_usuario();
+
+  Usuario.update(
+  {documento:documento},
+  {rol:rol}
+  ).then((rawResponse) => {
+   return true;
+  })
+  .catch((err) => {
+      return console.log(err);
+  });
 }
 
 module.exports = {

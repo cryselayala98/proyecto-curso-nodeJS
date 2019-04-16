@@ -303,12 +303,11 @@ app.post('/cambiar-rol-user',(req,res)=>{
   let documento = req.body.documento;
   let rol = req.body.rol;
   if(req.session.documento == documento){
-    res.render('coordinador/roles',{
+    res.render('coordinador/index-coordinador',{
       error: 'Tu no puedes cambiar de rol'
     })
   }else{
   funciones.cambiar_rol(documento, rol);
-
   res.render('coordinador/index-coordinador',{
     success: 'El usuario ha sido cambiado de rol exitosamente'
   })

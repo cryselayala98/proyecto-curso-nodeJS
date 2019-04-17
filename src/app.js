@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 
 
 const directorio_publico = path.join(__dirname, '../public');
+
 const directorio_node_modules =  path.join(__dirname, '../node_modules');
 
 app.use(express.static(directorio_publico))

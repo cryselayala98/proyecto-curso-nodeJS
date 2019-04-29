@@ -4,6 +4,7 @@ const path = require('path')
 const hbs = require('hbs')
 const bcrypt = require('bcrypt')
 const funciones = require('./../funciones')
+const sgMail = require('@sendgrid/mail');
 
 const Usuario = require('./../models/usuarios');
 const Curso = require('./../models/listado-de-cursos');
@@ -14,6 +15,7 @@ const directorio_partials =  path.join(__dirname, '../../partials');
 
 app.set('view engine', 'hbs');
 app.set('views', dir_views);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 hbs.registerPartials(directorio_partials);
 require('./../helpers')
 
@@ -260,6 +262,16 @@ app.post('/registrar-user', (req,res)=>{
         req.session.correo= correo;
         req.session.telefono= telefono;
         req.session.rol= 'aspirante';
+
+        //enviar correo para el Registro
+        const msg = {
+         to: correo,
+         from: 'criselayala98@gmail.com',
+         subject: 'Bienvenido',
+         text: 'Bienvenido a la Plataforma de Educación Contínua :D'
+        };
+        sgMail.send(msg);
+
         res.redirect('/principal');
       }
 

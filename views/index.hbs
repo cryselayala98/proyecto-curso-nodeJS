@@ -24,8 +24,16 @@
       <h3>INICIAR SESIÓN</h3>
 
             <form action="/iniciar" method="post">
-            <label for="usr">Documento de Identidad</label>
-            <input style="position: center" class="form-control" name= "documento" placeholder="0000000">
+            <label for="usr">Nombre de usuario</label>
+            <input type="text" style="position: center" class="form-control" name= "nombre">
+            <label for="usr">Rol:</label>
+            <select name="rol" class="form-control">
+              <option value="aspirante">aspirante</option>
+              <option value="docente">docente</option>
+              <option value="coordinador">coordinador</option>
+            </select>
+            <label for="usr">Contraseña:</label>
+            <input type="password" style="position: center" class="form-control" name= "contrase">
             <br>
             <button class="btn btn-dark">Ingresar</button>
           </form>

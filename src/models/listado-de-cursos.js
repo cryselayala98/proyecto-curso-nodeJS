@@ -29,6 +29,10 @@ const cursos_Schema = new Schema({
   estado : {
     type : String,
     require : true
+  },
+  docente_encargado_nombre : {
+    type : String,
+    default : "no asignado aun"
   }
 });
 

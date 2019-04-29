@@ -36,8 +36,26 @@
 <div class="design">
   <h2>TODOS LOS CURSOS</h2>
   {{{ver-todos-los-cursos cursos}}}
+
+<center>
+<h2>Cerrar un Curso</h2>
+<form action="/cerrarCurso" method="post">
+
+<label>Curso a cerrar</label>
+<select name="id_curso" class="form-control">
+{{{nombres-de-los-cursos cursos}}}
+</select>
+
+<label>Docente asignado</label>
+<select name="id_doc" class="form-control">
+{{{nombre-docentes docentes}}}
+</select>
+
+<br>
+<button class="btn btn-dark" >Cerrar Curso</button>
+</form>
+
+</center>
 </div>
-
-
 
 {{>footer}}

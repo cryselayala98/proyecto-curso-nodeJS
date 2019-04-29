@@ -21,6 +21,10 @@ const usuarioSchema = new Schema({
   rol : {
     type : String,
     require : true
+  },
+  password : {
+    type : String,
+    require : true
   }
 });
 

@@ -2,8 +2,8 @@ const express = require('express')
 const app = express()
 const path = require('path')
 const hbs = require('hbs')
+const bcrypt = require('bcrypt')
 const funciones = require('./../funciones')
-var cookieSession = require('cookie-session')
 
 const Usuario = require('./../models/usuarios');
 const Curso = require('./../models/listado-de-cursos');
@@ -16,12 +16,6 @@ app.set('view engine', 'hbs');
 app.set('views', dir_views);
 hbs.registerPartials(directorio_partials);
 require('./../helpers')
-
-app.use(cookieSession({
-  name: 'session',
-  keys: ['123456'],
-  maxAge: 24 * 60 * 60 * 1000
-}));
 
 const aja = () =>{
   return req.session.documento;
@@ -172,30 +166,37 @@ app.post('/relacionar-curso', (req,res)=>{
 });
 
 app.post('/iniciar', (req,res)=>{
-  let documento= req.body.documento;
-
-  Usuario.find({
-      documento: documento
+  let nombre= req.body.nombre;
+  let rol= req.body.rol;
+  let pass= bcrypt.hashSync(req.body.contrase, 10);
+  Usuario.findOne({
+      nombre:nombre,
+      rol:rol
   }).exec(function(err, validar_repetido) {
       if (err){
         console.log(err);
       }
-
-      if(!validar_repetido.length){
+      if(!validar_repetido){
         res.render('index', {
           error: "El usuario no existe"
         });
       }
       else{
+        if(!bcrypt.compareSync(req.body.contrase, validar_repetido.password)){
+        res.render('index', {
+          error: "Contraseña incorrecta"
+        });
+      }
+      else{
 
-        req.session.nombre= validar_repetido[0].nombre;
-        req.session.documento= validar_repetido[0].documento;
-        req.session.correo= validar_repetido[0].correo;
-        req.session.telefono= validar_repetido[0].telefono;
-        req.session.rol= validar_repetido[0].rol;
+        req.session.nombre= validar_repetido.nombre;
+        req.session.documento= validar_repetido.documento;
+        req.session.correo= validar_repetido.correo;
+        req.session.telefono= validar_repetido.telefono;
+        req.session.rol= validar_repetido.rol;
         res.redirect('/principal');
       }
-
+}
   });
 });
 
@@ -237,7 +238,7 @@ app.post('/registrar-user', (req,res)=>{
   let correo= req.body.correo;
   let nombre= req.body.nombre;
   let telefono= req.body.telefono;
-
+  let pass= bcrypt.hashSync(req.body.contra, 10);
   Usuario.find({
       documento: documento
   }).exec(function(err, resultado) {
@@ -252,7 +253,7 @@ app.post('/registrar-user', (req,res)=>{
       }
       else{
 
-        funciones.registrar_usuario(documento, correo, nombre, telefono);
+        funciones.registrar_usuario(documento, correo, nombre, telefono, pass);
 
         req.session.documento= documento;
         req.session.nombre= nombre;
@@ -271,9 +272,35 @@ app.get('/principal', (req,res)=>{
     res.render('aspirante/index-aspirante', {
       nombre: req.session.nombre
     });
-  }else{
+  }else if(req.session.rol=='coordinador'){
     res.render('coordinador/index-coordinador', {
       nombre: req.session.nombre
+    });
+  }else{
+    //cargar info de los cursos del docente y estudiante inscritos
+    Curso.find({docente_encargado_nombre:req.session.nombre }).exec((err, respuesta1)=>{
+      if(err){
+        return console.log(err);
+      }
+
+      Usuario.find({}).exec((err, respuesta2)=>{
+        if(err){
+          return console.log(err);
+        }
+
+        Curso_est.find({}).exec((err, respuesta3)=>{
+          if(err){
+            return console.log(err);
+          }
+
+          res.render('docente/index-docente',{
+            cursos: respuesta1,
+            usuarios:respuesta2,
+            cursos_est:respuesta3
+          });
+        });
+      });
+
     });
   }
 
@@ -299,24 +326,32 @@ app.get('/ver-cursos', (req,res)=>{
         cursos: respuesta
       });
     }else{
-      res.render('coordinador/ver-cursos',{
-        cursos: respuesta
+      Usuario.find({rol:'docente'}).exec((err, respuesta2)=>{
+        if(err){
+          return console.log(err);
+        }
+        res.render('coordinador/ver-cursos',{
+          cursos: respuesta,
+          docentes:respuesta2
+        });
       });
     }
 
   });
 });
 
-app.get('/cerrarCurso', (req,res)=>{ //cerrar un curso que está disponible; recibe una url tipo (http://localhost:3000/cerrarCurso?id_curso=4)
+app.post('/cerrarCurso', (req,res)=>{ //cerrar un curso que está disponible; recibe una url tipo (http://localhost:3000/cerrarCurso?id_curso=4)
 
-  let id_curso = req.query.id_curso;
-  console.log("ksdfkddkf");
-  Curso.findOneAndUpdate({ id: id_curso }, { $set: { estado: 'cancelado'} }, {new:true}, (err, resultados)=>{
+  let id_curso = req.body.id_curso;
+  let id_doc = req.body.id_doc;
+  console.log(id_curso+" "+id_doc);
+  Curso.findOneAndUpdate({ id: id_curso }, { $set: { estado: 'cancelado', docente_encargado_nombre:id_doc} }, {new:true}, (err, resultados)=>{
     if(err){
       return console.log(err);
     }
     res.render('coordinador/index-coordinador', {
-      success : "El curso se ha cancelado"
+      success : "El curso se ha cancelado",
+      nombre: req.session.nombre
     });
   });
 });
@@ -348,8 +383,6 @@ app.get('/crear-curso',(req,res)=>{
 });
 
 app.get('/inscritos',(req,res)=>{
-
-  let texto = '';
 
   Curso.find({}).exec((err, respuesta1)=>{
     if(err){

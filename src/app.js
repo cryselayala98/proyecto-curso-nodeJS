@@ -1,5 +1,4 @@
-//PARA EJECUTAR   //nodemon app -e js,hbs,json
-
+////PARA EJECUTAR   //nodemon app -e js,hbs,json
 require ('./config/config')
 const express = require('express')
 const app = express()
@@ -18,20 +17,23 @@ app.use(bodyParser.urlencoded({ extended : false }));
 
 app.use(require('./routes/index'));
 
-mongoose.connect(process.env.URLDB, {useNewUrlParser: true}, (err, resultado)=>{
-  if(err){
-    return console.log(err)
-  }
-  console.log('estás conectado')
-});
-
-/*mongoose.connect('mongodb://localhost:27017/proyecto-node', {useNewUrlParser: true}, (err, resultado)=>{
+/*mongoose.connect(process.env.URLDB, {useNewUrlParser: true}, (err, resultado)=>{
   if(err){
     return console.log(err)
   }
   console.log('estás conectado')
 });*/
 
+mongoose.connect('mongodb://localhost:27017/proyecto-node', {useNewUrlParser: true}, (err, resultado)=>{
+  if(err){
+    return console.log(err)
+  }
+  console.log('estás conectado')
+});
+
 app.listen(process.env.PORT, ()=>{
   console.log("Escuchando en el Puerto 3000 :3");
 });
+/*app.listen(3000, ()=>{
+  console.log("Escuchando en el Puerto 3000 :3");
+});*/

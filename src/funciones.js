@@ -97,7 +97,6 @@ const registrar_nuevo_curso = (id_curso, nombre, valor, descripcion, modalidad, 
 }
 
 const registrar_usuario = (documento, correo, nombre, telefono) =>{
-  listar_usuarios();
   let aspirante = new Usuario({
     documento : documento,
     telefono : telefono,
@@ -138,14 +137,7 @@ const listar_cursos_todos = () =>{
   return texto;
 }
 
-const listar_usuarios = () =>{
 
-  Usuario.find({}).exec((err, respuesta)=>{
-      if(err){
-        return console.log(err);
-      }
-    });
-}
 
 const listando_cursos = () =>{
 
@@ -181,16 +173,6 @@ const validar_existencia_curso_estudiante = (id_curso, id_est) =>{
   return validar;
 }
 
-const cerrar_curso = (id_curso) =>{
-  listando_cursos();
-  let curso_search = lista_cursos.find( curso =>(curso.id == id_curso));
-  curso_search.estado ='cancelado';
-  let cursos = lista_cursos.filter( curso =>(curso.id != id_curso));
-  cursos.push(curso_search);
-  lista_cursos = cursos;
-  guardar_cursos();
-}
-
 const guardar_cursos = () =>{
   let datos = JSON.stringify(lista_cursos);
   fs.writeFile("./src/archivos-json/listado-de-cursos.json", datos, (err)=>{
@@ -223,7 +205,6 @@ module.exports = {
   cancelar_curso,
   validar_existencia_curso_estudiante,
   listar_cursos_todos,
-  cerrar_curso,
   registrar_nuevo_curso,
   cambiar_rol
 };

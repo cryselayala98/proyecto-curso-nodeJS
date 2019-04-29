@@ -9,6 +9,7 @@
   "author": "crisel criseljazminal@ufps.edu.co",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.4",
     "cookie-session": "^1.3.3",
@@ -16,7 +17,7 @@
     "express-session": "^1.15.6",
     "hbs": "^4.0.3",
     "mongodb": "^3.2.3",
-    "mongoose": "^5.5.1",
+    "mongoose": "^5.5.4",
     "nodemon": "^1.18.10",
     "yargs": "^13.2.2"
   }

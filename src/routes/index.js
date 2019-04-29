@@ -4,6 +4,7 @@ const path = require('path')
 const hbs = require('hbs')
 const funciones = require('./../funciones')
 var cookieSession = require('cookie-session')
+
 const Usuario = require('./../models/usuarios');
 const Curso = require('./../models/listado-de-cursos');
 const Curso_est = require('./../models/registrados-curso');
@@ -35,56 +36,139 @@ app.get('/', (req,res)=>{
 });
 
 app.get('/mis-cursos', (req,res)=>{
-  let texto= funciones.listar_cursos_estudiante(req.session.documento);
-  res.render('aspirante/mis-cursos',{
-    cursos: texto
-  });
+  curs= [];
+  Curso_est.find({  //listar cursos del estudiante
+      id_est: req.session.documento
+  }).exec(function(err, res1) {
+      if (err){
+        console.log(err);
+      }
+
+     res1.forEach(curso=>{
+        Curso.find({  //listar cursos del estudiante
+            id: curso.id_curso,
+        }).exec(function(err, res2) {
+            if (err){
+              console.log(err);
+            }
+            console.log("hola "+res2[0]);
+      curs.push(res2[0]);
+      });
+});
+      res.render('aspirante/mis-cursos',{
+        cursos: curs
+      });
+});
 });
 
 app.post('/dar_baja_curso', (req,res)=>{
-  let id= req.body.id;
-  let validar = funciones.validar_existencia_curso_estudiante(id, req.session.documento); //si ese curso existe
-  let texto= funciones.listar_cursos_estudiante(req.session.documento);
+  let id_curso= req.body.id;
+  curs=[];
+  Curso_est.find({  //validar que se encuentra inscrito
+      id_est: req.session.documento,
+      id_curso:id_curso
+  }).exec(function(err, res1) {
+      if (err){
+        console.log(err);
+      }
+      if(!res1.length){
+        Curso_est.find({  //listar cursos del estudiante
+            id_est: req.session.documento
+        }).exec(function(err, res1) {
+            if (err){
+              console.log(err);
+            }
 
+           res1.forEach(curso=>{
+              Curso.find({  //listar cursos del estudiante
+                  id: curso.id_curso,
+              }).exec(function(err, res2) {
+                  if (err){
+                    console.log(err);
+                  }
+            curs.push(res2[0]);
+            });
+      });
+            res.render('aspirante/mis-cursos',{
+              cursos: curs,
+              error: "no estás registrado en este curso"
+            });
+      });
+      }else{
+        Curso_est.findOneAndDelete({ id_curso: id_curso, id_est: req.session.documento }, req.body, (err, resultados)=>{
+          if(err){
+            return console.log(err);
+          }
+        Curso_est.find({  //listar cursos del estudiante
+            id_est: req.session.documento
+        }).exec(function(err, res1) {
+            if (err){
+              console.log(err);
+            }
 
-  if(!validar){
-    res.render('aspirante/mis-cursos', {
-      cursos: texto,
-      error : "No estás registrado a ese curso"
+           res1.forEach(curso=>{
+              Curso.find({  //listar cursos del estudiante
+                  id: curso.id_curso,
+              }).exec(function(err, res2) {
+                  if (err){
+                    console.log(err);
+                  }
+                  console.log("hola "+res2[0]);
+            curs.push(res2[0]);
+            });
+      });
+            res.render('aspirante/mis-cursos',{
+              cursos: curs,
+              success: "cancelacion de curso exitosa"
+            });
+      });
     });
-  }else{
+      }
+  });
 
-    funciones.cancelar_curso(id, req.session.documento);
-
-    res.render('aspirante/index-aspirante', {
-      cursos: texto,
-      success : "Cancelación de curso exitosa"
-    });
-  }
 });
 
 app.post('/relacionar-curso', (req,res)=>{
 
   let id= req.body.id;
-  let validar = funciones.validar_existencia_curso(id); //si ese curso existe
+  console.log(id);
+  Curso_est.find({id_curso:id, id_est:req.session.documento}).exec((err, val)=>{//si el estudiante no se había registrado antes
+    if(err){
+      return console.log(err);
+    }
+    if(val.length){
+      res.render('aspirante/inscribir-curso', {
+        error : "Ya se registró antes a este curso"
+      });
+    }else{
 
-  if(!validar){
-    res.render('aspirante/inscribir-curso', {
-      error : "El curso no existe"
-    });
-  }else{
+  Curso.find({id:id}).exec((err, validar)=>{//si el curso existe
+    if(err){
+      return console.log(err);
+    }
+    if(!validar.length){
+      res.render('aspirante/inscribir-curso', {
+        error : "El curso no existe"
+      });
+    }else{
 
-  validar = funciones.registrar_curso_est(req.session.documento, id);
-  if(!validar){
-    res.render('aspirante/inscribir-curso', {
-      error : "Ya se inscribió antes a ese curso"
-    });
-  }else{
-    res.render('aspirante/inscribir-curso', {
-      success : "Registro de Curso exitoso"
-    });
-  }
-  }
+      //registrarse
+      let nuevo = new Curso_est({
+        id_est : req.session.documento,
+        id_curso : id,
+      });
+
+      nuevo.save((err, resultado) => {
+        if(err)return false;
+        res.render('aspirante/inscribir-curso', {
+          success : "Registro de Curso exitoso"
+        });
+      });
+
+    }
+});
+}
+});
 });
 
 app.post('/iniciar', (req,res)=>{
@@ -183,7 +267,6 @@ app.post('/registrar-user', (req,res)=>{
 });
 
 app.get('/principal', (req,res)=>{
-//  console.log(req.session.nombre);
   if(req.session.rol=='aspirante'){
     res.render('aspirante/index-aspirante', {
       nombre: req.session.nombre
@@ -227,19 +310,28 @@ app.get('/ver-cursos', (req,res)=>{
 app.get('/cerrarCurso', (req,res)=>{ //cerrar un curso que está disponible; recibe una url tipo (http://localhost:3000/cerrarCurso?id_curso=4)
 
   let id_curso = req.query.id_curso;
-  funciones.cerrar_curso(id_curso);
-  res.render('coordinador/index-coordinador',{
-    success: 'El curso '+ id_curso +' se ha cerrado'
-  })
+  console.log("ksdfkddkf");
+  Curso.findOneAndUpdate({ id: id_curso }, { $set: { estado: 'cancelado'} }, {new:true}, (err, resultados)=>{
+    if(err){
+      return console.log(err);
+    }
+    res.render('coordinador/index-coordinador', {
+      success : "El curso se ha cancelado"
+    });
+  });
 });
 
 app.get('/eliminar-user-curso', (req,res)=>{
   let documento = req.query.documento;
   let id_curso = req.query.id_curso;
-  funciones.cancelar_curso(id_curso,documento);
 
-  res.render('coordinador/index-coordinador', {
-    success : "Se ha liberado un cupo"
+  Curso_est.findOneAndDelete({ id_curso: id_curso, id_est: documento }, req.body, (err, resultados)=>{
+    if(err){
+      return console.log(err);
+    }
+    res.render('coordinador/index-coordinador', {
+      success : "Se ha liberado un cupo"
+    });
   });
 });
 

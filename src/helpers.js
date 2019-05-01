@@ -34,6 +34,45 @@ hbs.registerHelper('ver-cursos-disponibles', (cursos)=>{
    return texto;
 });
 
+
+hbs.registerHelper('mis-cursos-listar', ( cursos_est, cursos)=>{
+
+  let texto = '<table class: "table table-striped table-hover" width=700px>'+
+               '<thead class= "thead black">'+
+               '<th>id</th>'+
+               '<th>nombre</th>'+
+               '<th>valor</th>'+
+               '<th>descripcion</th>'+
+               '<th>modalidad</th>'+
+               '<th>intensidad</th>'+
+               '<th>docente asignado</th>'+
+               '<th>Opciones</th>'+
+               '</thead>'+
+               '<tbody>';
+   cursos_est.forEach(ce => {
+
+     let curso = cursos.find( c =>(c.id== ce.id_curso));
+     texto = texto +
+     '<tr>'+
+     '<td>'+curso.id+'</td>'+
+     '<td>'+curso.nombre+'</td>'+
+     '<td>'+curso.valor+'</td>'+
+     '<td>'+curso.descripcion+'</td>'+
+     '<td>'+curso.modalidad+'</td>'+
+     '<td>'+curso.intensidad+'</td>'+
+     '<td>'+curso.docente_encargado_nombre+'</td>'+
+     '<td><a href="/entorno-de-trabajo?curso='+curso.id+'">Entrar al curso</a></td>'+
+     '</tr>';
+
+  });
+
+   texto = texto + '</tbody> </table>';
+   return texto;
+
+
+});
+
+
 hbs.registerHelper('ver-todos-los-cursos', (cursos)=>{
   let texto = '<table class: "table table-striped table-hover" width=700px>'+
                '<thead class= "thead black" >'+
@@ -136,6 +175,7 @@ hbs.registerHelper('ver-cursos-del-docente', (cursos, usuarios, usuarios_curso)=
     '<br> <strong>descripcion: </strong>'+curso.descripcion+
     '<br> <strong>modalidad: </strong>'+curso.modalidad+
     '<br> <strong>intensidad: </strong>'+curso.intensidad+
+    '<br> <a href="/entorno-de-trabajo?curso='+curso.id+'">Entrar al curso</a>'+
     '</p>';
     let usuarios_act = usuarios_curso.filter(user => (user.id_curso == curso.id));
     if(usuarios_act.length>0){

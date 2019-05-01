@@ -6,9 +6,12 @@ const bcrypt = require('bcrypt')
 const funciones = require('./../funciones')
 const sgMail = require('@sendgrid/mail');
 
+//importando modelos
 const Usuario = require('./../models/usuarios');
 const Curso = require('./../models/listado-de-cursos');
 const Curso_est = require('./../models/registrados-curso');
+const Tareas = require('./../models/tareas');
+const Tareas_est = require('./../models/tarea_est');
 
 const dir_views = path.join(__dirname, '../../views');
 const directorio_partials =  path.join(__dirname, '../../partials');
@@ -32,7 +35,6 @@ app.get('/', (req,res)=>{
 });
 
 app.get('/mis-cursos', (req,res)=>{
-  curs= [];
   Curso_est.find({  //listar cursos del estudiante
       id_est: req.session.documento
   }).exec(function(err, res1) {
@@ -40,20 +42,16 @@ app.get('/mis-cursos', (req,res)=>{
         console.log(err);
       }
 
-     res1.forEach(curso=>{
-        Curso.find({  //listar cursos del estudiante
-            id: curso.id_curso,
-        }).exec(function(err, res2) {
+        Curso.find({}).exec(function(err, res2) {
             if (err){
               console.log(err);
             }
-            console.log("hola "+res2[0]);
-      curs.push(res2[0]);
+            res.render('aspirante/mis-cursos',{
+              cursos_est: res1,
+              cursos:res2
+            });
       });
-});
-      res.render('aspirante/mis-cursos',{
-        cursos: curs
-      });
+
 });
 });
 
@@ -452,6 +450,28 @@ app.post('/cambiar-rol-user',(req,res)=>{
 
 });
 
+app.get('/entorno-de-trabajo', (req,res)=>{
+
+
+  let id_curso = req.query.curso;
+  Curso.findOne({id:id_curso}).exec((err, respuesta)=>{
+    if(err){
+      return console.log(err);
+    }
+    if(req.session.rol=='aspirante'){
+    res.render('aspirante/entorno-de-trabajo',{
+      nombrecurso: respuesta.nombre,
+      idcurso:respuesta.id
+    });
+    }else{  //como docente
+      res.render('docente/entorno-de-trabajo',{
+        nombrecurso: respuesta.nombre,
+        idcurso:respuesta.id
+      });
+    }
+  });
+
+});
 
 
 app.get('/cerrar', (req,res)=>{
